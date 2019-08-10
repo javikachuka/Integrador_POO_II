@@ -6,13 +6,9 @@
 package modelo;
 
 import java.util.Date;
-import java.util.List;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 
@@ -21,24 +17,21 @@ import javax.persistence.Temporal;
  * @author kachu
  */
 @Entity
-@Table(name="preguntas")
-public class Pregunta {
+@Table(name="respuestas")
+public class Respuesta {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id ;
-    private String titulo ;
-    private String descripcion ;
+    private String respuesta ;
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date fecha ;
-    @ManyToOne
-    private Foro foro ;
+    private int votosPositivos ;
+    private int votosNegativos ;
     @ManyToOne
     private UsuarioAcademico usuario ;
-    @OneToMany(targetEntity = Respuesta.class)
-    private List<Respuesta> respuestas ;
-    
+    @ManyToOne
+    private Pregunta pregunta ;
 
-    public Pregunta(){
+    public Respuesta(){
         this.fecha = new Date() ;
     }
     
@@ -46,20 +39,12 @@ public class Pregunta {
         return id;
     }
 
-    public String getTitulo() {
-        return titulo;
+    public String getRespuesta() {
+        return respuesta;
     }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+    public void setRespuesta(String respuesta) {
+        this.respuesta = respuesta;
     }
 
     public Date getFecha() {
@@ -69,6 +54,23 @@ public class Pregunta {
     public void setFecha(Date fecha) {
         this.fecha = fecha;
     }
+
+    public int getVotosPositivos() {
+        return votosPositivos;
+    }
+
+    public void setVotosPositivos(int votosPositivos) {
+        this.votosPositivos = votosPositivos;
+    }
+
+    public int getVotosNegativos() {
+        return votosNegativos;
+    }
+
+    public void setVotosNegativos(int votosNegativos) {
+        this.votosNegativos = votosNegativos;
+    }
+    
     
     
     
