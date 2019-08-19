@@ -7,6 +7,7 @@ package persistencia;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -49,6 +50,10 @@ public class Persistencia {
     public void refrescar(Object o) {
         this.em.refresh(o);
     }
+    
+    public EntityTransaction buscarEntityManager(){
+       return this.em.getTransaction();
+    }
 
     public <T extends Object> T buscar(Class<T> clase, Object id) {
         return (T) this.em.find(clase, id);
@@ -68,5 +73,5 @@ public class Persistencia {
         consulta.orderBy(cb.asc(inicio.get(orden)));
         return em.createQuery(consulta).getResultList();
     }
-
+    
 }

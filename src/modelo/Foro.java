@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
@@ -22,13 +23,19 @@ import javax.persistence.Table;
 @Table(name="foros")
 public class Foro {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name="sec_foros",initialValue=1,allocationSize = 1)  
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="sec_foros")
     private int id ;
     private String tema ;
-    @OneToMany
+    @OneToMany(mappedBy="foro")
     private List<Pregunta> preguntas ;
 
     public Foro(){
+        this.preguntas = new ArrayList<>() ;
+    }
+    
+    public Foro(String tema){
+        this.tema= tema ;
         this.preguntas = new ArrayList<>() ;
     }
     
@@ -58,5 +65,10 @@ public class Foro {
     
     public void eliminarPregunta(Pregunta p){
         this.preguntas.remove(p) ;
+    }
+    
+    @Override
+    public String toString(){
+        return this.tema ;
     }
 }

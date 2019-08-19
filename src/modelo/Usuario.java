@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
@@ -24,19 +25,36 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Usuario {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name="sec_user",initialValue=1,allocationSize = 1)  
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="sec_user")
     private int id ;
     private String nombre ;
     private String apellido ;
-    private int dni ;
+    private String dni ;
     private String tipoUsuario ;
     private String email ;
     private String password ;
+    private Boolean borrado ;
     
+    public static final String ADMINISTRADOR = "ADMINISTRADOR" ;
+    public static final String PROFESOR = "PROFESOR" ;
+    public static final String ESTUDIANTE = "ESTUDIANTE" ;
+    public static final String REGISTRADOR = "REGISTRADOR" ;
+
     
     
     public Usuario(){
         
+    }
+    
+    public Usuario(String nombre, String apellido, String dni, String tipoUsuario, String email, String pass){
+        this.nombre = nombre ;
+        this.apellido = apellido ;
+        this.dni = dni ;
+        this.tipoUsuario = tipoUsuario ;
+        this.email = email ;
+        this. password = pass ;
+        this.borrado = false ;
     }
 
     public int getId() {
@@ -59,11 +77,11 @@ public class Usuario {
         this.apellido = apellido;
     }
 
-    public int getDni() {
+    public String getDni() {
         return dni;
     }
 
-    public void setDni(int dni) {
+    public void setDni(String dni) {
         this.dni = dni;
     }
 
@@ -90,7 +108,14 @@ public class Usuario {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public void setBorrado(Boolean borrado) {
+        this.borrado = borrado;
+    }
+
     
-    
+    public Boolean getBorrado() {
+        return borrado;
+    }
     
 }

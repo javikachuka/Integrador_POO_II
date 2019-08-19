@@ -21,24 +21,32 @@ import javax.persistence.PrimaryKeyJoinColumn;
 public class UsuarioAcademico extends Usuario {
     
     private int reputacion ;
-    private int votosPositivos ;
-    private int votosNegativos ;
-    @OneToMany(targetEntity = Pregunta.class)
+    @OneToMany(mappedBy="usuario")
     private List<Pregunta> preguntas ;
-    @OneToMany(targetEntity = Respuesta.class)
+    @OneToMany(mappedBy="usuario")
     private List<Respuesta> respuestas ;
-    @ManyToMany(targetEntity = Materia.class)
+    @ManyToMany
     private List<Materia> materias ;
+    @OneToMany(mappedBy="usuario")
+    private List<Voto> votos ;
 
     public UsuarioAcademico(){
         super();
         this.reputacion = 0;
-        this.votosPositivos = 0;
-        this.votosNegativos = 0 ;
         this.preguntas = new ArrayList<>() ;
         this.respuestas = new ArrayList<>();
         this.materias = new ArrayList<>();
+        this.votos = new ArrayList<>();
         
+    }
+    
+    public UsuarioAcademico(String nombre , String apellido, String dni , String tipoUsuario, String email, String pass){
+        super(nombre , apellido, dni , tipoUsuario, email, pass) ;
+        this.reputacion = 0;
+        this.preguntas = new ArrayList<>() ;
+        this.respuestas = new ArrayList<>();
+        this.materias = new ArrayList<>();
+        this.votos = new ArrayList<>();
     }
     
     public int getReputacion() {
@@ -48,22 +56,7 @@ public class UsuarioAcademico extends Usuario {
     public void setReputacion(int reputacion) {
         this.reputacion = reputacion;
     }
-
-    public int getVotosPositivos() {
-        return votosPositivos;
-    }
-
-    public void setVotosPositivos(int votosPositivos) {
-        this.votosPositivos = votosPositivos;
-    }
-
-    public int getVotosNegativos() {
-        return votosNegativos;
-    }
-
-    public void setVotosNegativos(int votosNegativos) {
-        this.votosNegativos = votosNegativos;
-    }
+    
 
     public List<Pregunta> getPreguntas() {
         return preguntas;
@@ -88,6 +81,72 @@ public class UsuarioAcademico extends Usuario {
     public void setMaterias(List<Materia> materias) {
         this.materias = materias;
     }
+    
+    public void agregarMateria(Materia m){
+        this.materias.add(m) ;
+    }
+    
+    public void quitarMateria(Materia m){
+        this.materias.remove(m);
+    }
+
+    public List<Voto> getVotos() {
+        return votos;
+    }
+
+    public void setVotos(List<Voto> votos) {
+        this.votos = votos;
+    }
+
+    public void agregarPregunta(Pregunta p){
+        this.preguntas.add(p) ;
+    }
+    
+    public void eliminarPregunta(Pregunta p){
+        this.preguntas.remove(p) ;
+    }
+    
+    public void agregarRespuesta(Respuesta r){
+        this.respuestas.add(r) ;
+    }
+    
+    public void eliminarRespuesta(Respuesta r){
+        this.respuestas.remove(r) ;
+    }
+    
+    public int getCantResp(){
+        return this.respuestas.size() ;
+    }
+    
+    public int getCantPreg(){
+        return this.preguntas.size() ;
+    }
+    
+    public void agregarVoto(Voto voto){
+        this.votos.add(voto) ;
+    }
+   
+    public void sumarReputacion(){
+        this.reputacion += 5 ;
+    }
+    
+    public void restarReputacion(){
+        if((reputacion-2)>0){
+            this.reputacion -= 2;
+        }else{
+            reputacion = 0;
+        }
+    }
+    
+    public void eliminarVoto(Voto v){
+        this.votos.remove(v );
+    }
+    
+    @Override
+    public String toString() {
+        return super.getApellido() + " " + super.getNombre() + " ( " + super.getTipoUsuario() + " )" ;
+    }
+    
     
     
 }
