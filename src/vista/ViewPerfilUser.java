@@ -256,13 +256,13 @@ public class ViewPerfilUser extends javax.swing.JFrame {
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
 
-        this.previo.setEnabled(true);
+        this.previo.setVisible(true);
         this.previo.setLocationRelativeTo(null);
         this.dispose();
     }//GEN-LAST:event_formWindowClosing
 
     private void btnAtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtrasActionPerformed
-        this.previo.setEnabled(true);
+        this.previo.setVisible(true);
         this.previo.setLocationRelativeTo(null);
         this.dispose();
     }//GEN-LAST:event_btnAtrasActionPerformed

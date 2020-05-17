@@ -45,6 +45,7 @@ public class ViewPregunta extends javax.swing.JFrame {
         recargarListaPreguntas();
         if (user.getTipoUsuario().equals(Usuario.ESTUDIANTE) | user.getTipoUsuario().equals(Usuario.PROFESOR)) {
             this.btnEliminarPregunta.setVisible(false);
+            this.btnEditarPregunta.setVisible(false);
         }
     }
 
@@ -71,9 +72,13 @@ public class ViewPregunta extends javax.swing.JFrame {
         btnEliminarPregunta = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
+        btnEditarPregunta = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowActivated(java.awt.event.WindowEvent evt) {
+                formWindowActivated(evt);
+            }
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
             }
@@ -127,6 +132,13 @@ public class ViewPregunta extends javax.swing.JFrame {
         jLabel5.setFont(new java.awt.Font("Times New Roman", 0, 36)); // NOI18N
         jLabel5.setText("?");
 
+        btnEditarPregunta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/editar.png"))); // NOI18N
+        btnEditarPregunta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarPreguntaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -153,8 +165,9 @@ public class ViewPregunta extends javax.swing.JFrame {
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(225, 225, 225)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addComponent(btnEditarPregunta, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addComponent(btnEliminarPregunta, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addComponent(btnRespuesta))
@@ -175,17 +188,17 @@ public class ViewPregunta extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(labelNombreForo)
                 .addGap(19, 19, 19)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(12, 12, 12)
                         .addComponent(jLabel3))
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel5)
                             .addComponent(txtPregunta, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnPublicarPregunta))
-                        .addGap(3, 3, 3)))
+                        .addGap(3, 3, 3))
+                    .addComponent(jLabel2))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(24, 24, 24)
@@ -198,26 +211,29 @@ public class ViewPregunta extends javax.swing.JFrame {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btnRespuesta)
-                        .addGap(29, 29, 29))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btnEliminarPregunta, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(20, 20, 20))))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(btnEditarPregunta, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addComponent(btnEliminarPregunta, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnRespuesta))
+                .addGap(20, 20, 20))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnPublicarPreguntaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPublicarPreguntaActionPerformed
-        if(!listaPreguntas.isSelectionEmpty()){
+        if (!listaPreguntas.isSelectionEmpty()) {
             listaPreguntas.clearSelection();
         }
-        String pregunta = "¿" + this.txtPregunta.getText() + "?";
-        this.controlador.publicarPregunta(pregunta, foro, (UsuarioAcademico) user);
-        this.listaPreguntas.clearSelection();
-        this.txtPregunta.setText("");
-        recargarListaPreguntas();
+        if (!txtPregunta.getText().isEmpty()) {
+            String pregunta = "¿" + this.txtPregunta.getText() + "?";
+            this.controlador.publicarPregunta(pregunta, foro, (UsuarioAcademico) user);
+            this.listaPreguntas.clearSelection();
+            this.txtPregunta.setText("");
+            recargarListaPreguntas();
+        }else{
+            JOptionPane.showMessageDialog(null, "Cargue el campo");
+        }
     }//GEN-LAST:event_btnPublicarPreguntaActionPerformed
 
     private void listaPreguntasValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listaPreguntasValueChanged
@@ -228,10 +244,13 @@ public class ViewPregunta extends javax.swing.JFrame {
     }//GEN-LAST:event_listaPreguntasValueChanged
 
     private void btnRespuestaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRespuestaActionPerformed
-        this.dispose();
-        ViewRespuesta vr = new ViewRespuesta(controlador, this, user, (Pregunta) this.listaPreguntas.getSelectedValue());
-        vr.setLocationRelativeTo(null);
-        vr.setVisible(true);
+        if (!listaPreguntas.isSelectionEmpty()) {
+            this.dispose();
+            ViewRespuesta vr = new ViewRespuesta(controlador, this, user, (Pregunta) this.listaPreguntas.getSelectedValue());
+            vr.setLocationRelativeTo(null);
+            vr.setVisible(true);
+        }
+
     }//GEN-LAST:event_btnRespuestaActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
@@ -243,6 +262,7 @@ public class ViewPregunta extends javax.swing.JFrame {
     private void btnEliminarPreguntaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarPreguntaActionPerformed
         if (!listaPreguntas.isSelectionEmpty()) {
             Pregunta p = (Pregunta) this.listaPreguntas.getSelectedValue();
+            //this.controlador.eliminarPregunta(p);
             this.controlador.eliminarPregunta(p);
             listaPreguntas.clearSelection();
             recargarListaPreguntas();
@@ -250,6 +270,21 @@ public class ViewPregunta extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Seleccione una Pregunta");
         }
     }//GEN-LAST:event_btnEliminarPreguntaActionPerformed
+
+    private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
+        listaPreguntas.clearSelection();
+        recargarListaPreguntas();
+    }//GEN-LAST:event_formWindowActivated
+
+    private void btnEditarPreguntaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarPreguntaActionPerformed
+        if (!listaPreguntas.isSelectionEmpty()) {
+            Pregunta p = (Pregunta) this.listaPreguntas.getSelectedValue();
+            ViewEditPregunta vep = new ViewEditPregunta(controlador, this, p);
+            this.setEnabled(false);
+            vep.setVisible(true);
+            vep.setLocationRelativeTo(null);
+        }
+    }//GEN-LAST:event_btnEditarPreguntaActionPerformed
 
     private void recargarListaPreguntas() {
         if (listaPreguntas.isSelectionEmpty()) {
@@ -273,6 +308,7 @@ public class ViewPregunta extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnEditarPregunta;
     private javax.swing.JButton btnEliminarPregunta;
     private javax.swing.JButton btnPublicarPregunta;
     private javax.swing.JButton btnRespuesta;

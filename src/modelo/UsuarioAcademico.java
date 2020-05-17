@@ -122,8 +122,8 @@ public class UsuarioAcademico extends Usuario {
         return this.preguntas.size() ;
     }
     
-    public void agregarVoto(Voto voto){
-        this.votos.add(voto) ;
+    public void agregarVoto(Voto v){
+        this.votos.add(v) ;
     }
    
     public void sumarReputacion(){

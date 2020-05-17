@@ -23,14 +23,14 @@ public class Controlador {
     }
 
     public List listarUsuarios() {
-        List<Usuario> users = this.persistencia.buscarTodos(Usuario.class);
-        List<Usuario> filtro = new ArrayList<>();
-        for (Usuario u : users) {
-            if (!u.getBorrado() & !u.getTipoUsuario().equals(Usuario.REGISTRADOR)) {
-                filtro.add(u);
-            }
-        }
-        return filtro;
+        return this.persistencia.buscarTodos(Usuario.class);
+//        List<Usuario> filtro = new ArrayList<>();
+//        for (Usuario u : users) {
+//            if (!u.getBorrado() & !u.getTipoUsuario().equals(Usuario.REGISTRADOR)) {
+//                filtro.add(u);
+//            }
+//        }
+//        return filtro;
     }
 
     public List listarAdministradores() {
@@ -97,9 +97,7 @@ public class Controlador {
     }
 
     public Usuario iniciarSesion(String email, String pass) {
-        if (!this.existeAdmin()) {
-            this.registrarUsuario("admin", "admin", "0", Usuario.ADMINISTRADOR, "admin@admin.com", "admin");
-        }
+
         List<Usuario> usuarios = this.listarUsuarios();
         for (Usuario user : usuarios) {
             String emailUser = user.getEmail();
@@ -188,21 +186,12 @@ public class Controlador {
 
     public void eliminarForo(Foro foro) {
         this.persistencia.iniciarTransaccion();
-        try {
-            List<Pregunta> preguntas = foro.getPreguntas() ;
-            if(!preguntas.isEmpty()){
-                for(int i = 0 ; i<preguntas.size() ;i++){
-                Pregunta p =preguntas.get(i) ;
-                this.eliminarPreguntaCompleta(p, this.persistencia);
-                }
-            }
-            this.persistencia.eliminar(foro);
-            this.persistencia.confirmarTransaccion();
-        } catch (Exception e) {
-            this.persistencia.descartarTransaccion();
-            System.out.println(e.getMessage());
-            System.out.println("lpm");
+        List<Pregunta> preguntas = foro.getPreguntas();
+        for (Pregunta p : preguntas) {
+            this.eliminarPreguntaCompleta(p, this.persistencia);
         }
+        this.persistencia.eliminar(foro);
+        this.persistencia.confirmarTransaccion();
     }
 
     public List verForos() {
@@ -226,42 +215,59 @@ public class Controlador {
         }
 
     }
+    
+    public void modificarPregunta(Pregunta pregunta, String titulo){
+        this.persistencia.iniciarTransaccion();
+        pregunta.setTitulo(titulo);
+        this.persistencia.modificar(pregunta);
+        this.persistencia.confirmarTransaccion();
+    }
 
     public void eliminarPregunta(Pregunta pregunta) {
         this.persistencia.iniciarTransaccion();
-        UsuarioAcademico ua = pregunta.getUsuario();
-        ua.eliminarPregunta(pregunta);
-        Foro foro = pregunta.getForo() ;
-        foro.eliminarPregunta(pregunta);
-        List<Respuesta> respuestas = pregunta.getRespuestas();
-        if (!respuestas.isEmpty()) {
-            for(int i = 0 ; i<respuestas.size() ;i++){
-                Respuesta r =respuestas.get(i) ;
-                this.eliminarRespuestaCompleta(r, this.persistencia);
-            }
+        UsuarioAcademico usuario = pregunta.getUsuario();
+        if (usuario != null) {
+            usuario.eliminarPregunta(pregunta);
+            persistencia.modificar(usuario);
         }
-        this.persistencia.eliminar(pregunta);
-        this.persistencia.modificar(ua);
+        List<Respuesta> respuestas = pregunta.getRespuestas();
+        for (Respuesta r : respuestas) {
+            //eliminamos la respuesta con sus respectivas asociaciones
+            this.eliminarRespuestaCompleta(r, persistencia);
+        }
+        persistencia.eliminar(pregunta);
+        Foro foro = pregunta.getForo();
+        foro.eliminarPregunta(pregunta);
         this.persistencia.modificar(foro);
         this.persistencia.confirmarTransaccion();
     }
-    
-    public void eliminarPreguntaCompleta(Pregunta pregunta , Persistencia p) {
-        UsuarioAcademico ua = pregunta.getUsuario();
-        ua.eliminarPregunta(pregunta);
-        Foro foro = pregunta.getForo() ;
-        foro.eliminarPregunta(pregunta);
-        List<Respuesta> respuestas = pregunta.getRespuestas();
-        if (!respuestas.isEmpty()) {
-            for(int i = 0 ; i<respuestas.size() ;i++){
-                
-                this.eliminarRespuestaCompleta(respuestas.get(i), p);
-            }
+
+    public void eliminarPreguntaCompleta(Pregunta pregunta, Persistencia pers) {
+        UsuarioAcademico usuarioA = pregunta.getUsuario();
+        if (usuarioA != null) {
+            usuarioA.eliminarPregunta(pregunta);
+            pers.modificar(usuarioA);
         }
-        p.eliminar(pregunta);
-        p.modificar(ua);
-        p.modificar(foro);
+        List<Respuesta> listaRespuestas = pregunta.getRespuestas();
+        for (Respuesta respuesta : listaRespuestas) {
+            //eliminamos la respuesta con sus respectivas asociaciones
+            this.eliminarRespuestaCompleta(respuesta, pers);
+        }
+        pers.eliminar(pregunta);
     }
+
+    public void eliminarRespuestaCompleta(Respuesta respuesta, Persistencia persis) {
+        UsuarioAcademico usuarioA = respuesta.getUsuario();
+        if (usuarioA != null) {
+            usuarioA.eliminarRespuesta(respuesta);
+            persis.modificar(usuarioA);
+        }
+        if (!respuesta.getVotos().isEmpty()) {
+            this.eliminarVotos(respuesta, persis);
+        }
+        persis.eliminar(respuesta);
+    }
+
 
     public List<Pregunta> verPreguntas(Foro foro) {
         return foro.getPreguntas();
@@ -302,26 +308,12 @@ public class Controlador {
             System.out.println(e.getMessage());
         }
     }
-
-    public void eliminarRespuestaCompleta(Respuesta respuesta, Persistencia p) {
-        try {
-            Pregunta pregunta = respuesta.getPregunta();
-            UsuarioAcademico ua = respuesta.getUsuario();
-            ua.eliminarRespuesta(respuesta);
-            pregunta.eliminarRespuesta(respuesta);
-            if (!respuesta.getVotos().isEmpty()) {
-                this.eliminarVotos(respuesta, p);
-                p.eliminar(respuesta);
-                p.modificar(ua);
-                p.modificar(pregunta);
-            } else {
-                p.eliminar(respuesta);
-                p.modificar(ua);
-                p.modificar(pregunta);
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+    
+    public void modificarRespuesta(Respuesta respuesta , String resp){
+        this.persistencia.iniciarTransaccion();
+        respuesta.setRespuesta(resp);
+        this.persistencia.modificar(respuesta);
+        this.persistencia.confirmarTransaccion();
     }
 
     public void eliminarRespuesta(Respuesta respuesta) {
@@ -333,13 +325,15 @@ public class Controlador {
             pregunta.eliminarRespuesta(respuesta);
             if (!respuesta.getVotos().isEmpty()) {
                 this.eliminarVotos(respuesta, this.persistencia);
-                this.persistencia.eliminar(respuesta);
                 this.persistencia.modificar(ua);
                 this.persistencia.modificar(pregunta);
+                this.persistencia.eliminar(respuesta);
+
             } else {
-                this.persistencia.eliminar(respuesta);
                 this.persistencia.modificar(ua);
                 this.persistencia.modificar(pregunta);
+                this.persistencia.eliminar(respuesta);
+
             }
             this.persistencia.confirmarTransaccion();
         } catch (Exception e) {
@@ -351,10 +345,12 @@ public class Controlador {
     public void eliminarVotos(Respuesta respuesta, Persistencia p) {
         try {
             List<Voto> votos = respuesta.getVotos();
-            UsuarioAcademico ua = respuesta.getUsuario();
-            for (int i = 0 ; i<votos.size() ; i++) {
+            for (int i = 0; i < votos.size(); i++) {
+                UsuarioAcademico ua = votos.get(i).getUsuario();
                 ua.eliminarVoto(votos.get(i));
+                p.modificar(ua);
                 p.eliminar(votos.get(i));
+
             }
         } catch (Exception e) {
         }
@@ -366,7 +362,8 @@ public class Controlador {
         try {
             List<Voto> votos = respuesta.getVotos();
             if (!votos.isEmpty()) {
-                for (Voto v : votos) {
+                for (int i = 0; i < votos.size(); i++) {
+                    Voto v = votos.get(i);
                     if ((v.getUsuario().equals(user))) {
                         if (v.getValor() != valor) {
                             v.setValor(valor);
@@ -376,6 +373,7 @@ public class Controlador {
                         }
 
                     } else {
+
                         Voto voto = new Voto(respuesta, valor, user);
                         respuesta.agregarVotos(voto);
                         user.agregarVoto(voto);
@@ -392,10 +390,10 @@ public class Controlador {
                 this.persistencia.modificar(respuesta);
                 this.persistencia.modificar(user);
             }
-
             this.persistencia.confirmarTransaccion();
         } catch (Exception e) {
             this.persistencia.descartarTransaccion();
+            System.out.println("algo paso");
         }
 
     }

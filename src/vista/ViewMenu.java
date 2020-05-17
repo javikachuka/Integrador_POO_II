@@ -189,7 +189,7 @@ public class ViewMenu extends javax.swing.JFrame {
                         .addComponent(btnEntrarForo))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnNuevoForo, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnEliminarForo, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(41, 41, 41))
@@ -581,10 +581,14 @@ public class ViewMenu extends javax.swing.JFrame {
 
         if (!listUsuarios.isSelectionEmpty()) {
             Usuario u = (Usuario) this.listUsuarios.getSelectedValue();
-            ViewPerfilUser vpu = new ViewPerfilUser(controlador, this, u);
-            vpu.setVisible(true);
-            vpu.setLocationRelativeTo(null);
-            this.dispose();
+            if (u.getTipoUsuario().equals(Usuario.REGISTRADOR)) {
+                JOptionPane.showMessageDialog(null, "Los registradores no tiene perfil");
+            } else {
+                ViewPerfilUser vpu = new ViewPerfilUser(controlador, this, u);
+                vpu.setVisible(true);
+                vpu.setLocationRelativeTo(null);
+                this.dispose();
+            }
         }
 
 
@@ -627,6 +631,7 @@ public class ViewMenu extends javax.swing.JFrame {
             this.txtDniUser.setText("");
             this.txtEmailUser.setText("");
             this.txtPassUser.setText("");
+            this.recargarUsuarios();
         }
     }//GEN-LAST:event_btnCrearUserActionPerformed
 
@@ -640,7 +645,7 @@ public class ViewMenu extends javax.swing.JFrame {
         if (txtMateria.getText().isEmpty() | txtLink.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Complete los campos");
         } else {
-            
+
             String materia = this.txtMateria.getText();
             String link = this.txtLink.getText();
             this.controlador.crearMateria(materia, link);
@@ -723,19 +728,19 @@ public class ViewMenu extends javax.swing.JFrame {
 
     private void btnEditarMateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarMateActionPerformed
         Materia m = (Materia) this.listaMaterias.getSelectedValue();
-        String nombre = this.txtMateria.getText() ;
+        String nombre = this.txtMateria.getText();
         String link = this.txtLink.getText();
         this.controlador.modificarMateria(m, nombre, link);
         recargarMaterias();
     }//GEN-LAST:event_btnEditarMateActionPerformed
 
     private void listaMateriasValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listaMateriasValueChanged
-        if(!listaMaterias.isSelectionEmpty()){
-            Materia m = (Materia) this.listaMaterias.getSelectedValue() ;
+        if (!listaMaterias.isSelectionEmpty()) {
+            Materia m = (Materia) this.listaMaterias.getSelectedValue();
             this.txtMateria.setText(m.getNombre());
             this.txtLink.setText(m.getEnlace());
         }
-        
+
     }//GEN-LAST:event_listaMateriasValueChanged
 
     private void recargarMaterias() {
@@ -751,7 +756,7 @@ public class ViewMenu extends javax.swing.JFrame {
         if (user.getTipoUsuario().equals("REGISTRADOR")) {
             elementos.add(Usuario.ESTUDIANTE);
             elementos.add(Usuario.PROFESOR);
-            elementos.add(Usuario.REGISTRADOR);
+            //elementos.add(Usuario.REGISTRADOR);
         } else {
             elementos.add(Usuario.ADMINISTRADOR);
             elementos.add(Usuario.ESTUDIANTE);
@@ -780,9 +785,11 @@ public class ViewMenu extends javax.swing.JFrame {
         } else if (Usuario.REGISTRADOR.equals(user.getTipoUsuario())) {
             this.panelUsers.setEnabledAt(0, false);
             this.panelUsers.setEnabledAt(1, false);
+            this.panelUsers.setEnabledAt(4, false);
             this.panelUsers.setSelectedIndex(2);
             this.btnEditarPerfil.setVisible(false);
             this.btnEliminarPerfil.setVisible(false);
+            this.btnPerfilUser.setEnabled(false);
         }
     }
 

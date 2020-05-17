@@ -118,4 +118,9 @@ public class Usuario {
         return borrado;
     }
     
+    @Override
+    public String toString() {
+        return apellido + " " + nombre + " ( " + tipoUsuario + " )" ;
+    }
+    
 }

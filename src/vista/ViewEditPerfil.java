@@ -9,6 +9,7 @@ import controlador.Controlador;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import modelo.Materia;
 import modelo.Usuario;
 import modelo.UsuarioAcademico;
@@ -19,9 +20,10 @@ import modelo.UsuarioAcademico;
  */
 public class ViewEditPerfil extends javax.swing.JFrame {
 
-    private final Controlador controlador ;
-    private Usuario user ;
-    private JFrame previo ;
+    private final Controlador controlador;
+    private Usuario user;
+    private JFrame previo;
+
     /**
      * Creates new form ViewEditPerfil
      */
@@ -29,21 +31,23 @@ public class ViewEditPerfil extends javax.swing.JFrame {
         initComponents();
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.setResizable(false);
-        this.controlador = c ;
-        this.previo = p ;
-        this.user = u ;
+        this.controlador = c;
+        this.previo = p;
+        this.user = u;
         cargarDatos();
-        if(Usuario.PROFESOR.equals(user.getTipoUsuario())) {
+        if (Usuario.PROFESOR.equals(user.getTipoUsuario())) {
             cargarMaterias();
             cargarMateriasAsignadas();
-        } else{
+            this.labelAviso.setVisible(false);
+        } else {
             this.listaMaterias.setEnabled(false);
             this.listMaterDictProf.setEnabled(false);
             this.btnAsignarMate.setEnabled(false);
             this.btnQuitarMate.setEnabled(false);
+            this.labelMate.setEnabled(false);
+            this.labelMateDic.setEnabled(false);
         }
-        
-        
+
     }
 
     /**
@@ -69,13 +73,14 @@ public class ViewEditPerfil extends javax.swing.JFrame {
         btnGuardarEdicion = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         listaMaterias = new javax.swing.JList();
-        jLabel7 = new javax.swing.JLabel();
+        labelMate = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         listMaterDictProf = new javax.swing.JList();
-        jLabel8 = new javax.swing.JLabel();
+        labelMateDic = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         btnAsignarMate = new javax.swing.JButton();
         btnQuitarMate = new javax.swing.JButton();
+        labelAviso = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -94,7 +99,7 @@ public class ViewEditPerfil extends javax.swing.JFrame {
 
         jLabel6.setText("Password");
 
-        btnGuardarEdicion.setText("Guardar");
+        btnGuardarEdicion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/guardar.png"))); // NOI18N
         btnGuardarEdicion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnGuardarEdicionActionPerformed(evt);
@@ -103,13 +108,13 @@ public class ViewEditPerfil extends javax.swing.JFrame {
 
         jScrollPane1.setViewportView(listaMaterias);
 
-        jLabel7.setFont(new java.awt.Font("Tw Cen MT", 0, 14)); // NOI18N
-        jLabel7.setText("Listado de Materias");
+        labelMate.setFont(new java.awt.Font("Tw Cen MT", 0, 14)); // NOI18N
+        labelMate.setText("Listado de Materias");
 
         jScrollPane2.setViewportView(listMaterDictProf);
 
-        jLabel8.setFont(new java.awt.Font("Tw Cen MT", 0, 14)); // NOI18N
-        jLabel8.setText("Materias dictadas");
+        labelMateDic.setFont(new java.awt.Font("Tw Cen MT", 0, 14)); // NOI18N
+        labelMateDic.setText("Materias dictadas");
 
         jLabel9.setFont(new java.awt.Font("Tw Cen MT", 0, 24)); // NOI18N
         jLabel9.setText("Edicion de Usuarios");
@@ -127,6 +132,10 @@ public class ViewEditPerfil extends javax.swing.JFrame {
                 btnQuitarMateActionPerformed(evt);
             }
         });
+
+        labelAviso.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        labelAviso.setForeground(new java.awt.Color(255, 0, 0));
+        labelAviso.setText("(*) La seccion de materias se habilita al editar un profesor");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -146,20 +155,19 @@ public class ViewEditPerfil extends javax.swing.JFrame {
                     .addComponent(jLabel6))
                 .addGap(57, 57, 57)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(txtNombreUser)
-                        .addComponent(txtApellidoUser)
-                        .addComponent(txtDniUser, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtNombreUser)
+                    .addComponent(txtApellidoUser)
+                    .addComponent(txtDniUser, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtEmailUser)
                     .addComponent(txtPassUser, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(72, 72, 72)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(labelMate, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel8)
+                        .addComponent(labelMateDic)
                         .addGap(30, 30, 30))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -170,7 +178,9 @@ public class ViewEditPerfil extends javax.swing.JFrame {
                         .addContainerGap())))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnGuardarEdicion)
+                .addComponent(labelAviso)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnGuardarEdicion, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -180,6 +190,27 @@ public class ViewEditPerfil extends javax.swing.JFrame {
                 .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(labelMate)
+                            .addComponent(labelMateDic))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(49, 49, 49)
+                                .addComponent(btnAsignarMate)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnQuitarMate)))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(34, 34, 34)
+                                .addComponent(btnGuardarEdicion, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(labelAviso, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(48, 48, 48))))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
@@ -200,23 +231,7 @@ public class ViewEditPerfil extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtPassUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel6))
-                        .addGap(91, 91, 91))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel8))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(49, 49, 49)
-                                .addComponent(btnAsignarMate)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnQuitarMate)))
-                        .addGap(36, 36, 36)
-                        .addComponent(btnGuardarEdicion)
-                        .addGap(19, 19, 19))))
+                        .addGap(91, 91, 91))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -240,9 +255,9 @@ public class ViewEditPerfil extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowClosing
 
     private void btnAsignarMateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAsignarMateActionPerformed
-        if(!listaMaterias.isSelectionEmpty()){
-            Materia m = (Materia) this.listaMaterias.getSelectedValue() ;
-            UsuarioAcademico ua = (UsuarioAcademico) user ;
+        if (!listaMaterias.isSelectionEmpty()) {
+            Materia m = (Materia) this.listaMaterias.getSelectedValue();
+            UsuarioAcademico ua = (UsuarioAcademico) user;
             this.controlador.asignarMateria(m, ua);
         }
         cargarMateriasAsignadas();
@@ -250,8 +265,8 @@ public class ViewEditPerfil extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAsignarMateActionPerformed
 
     private void btnQuitarMateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnQuitarMateActionPerformed
-        if(!listMaterDictProf.isSelectionEmpty()){
-            Materia m = (Materia) this.listMaterDictProf.getSelectedValue() ;
+        if (!listMaterDictProf.isSelectionEmpty()) {
+            Materia m = (Materia) this.listMaterDictProf.getSelectedValue();
             this.controlador.quitarMateria(m, (UsuarioAcademico) user);
         }
         cargarMateriasAsignadas();
@@ -259,30 +274,37 @@ public class ViewEditPerfil extends javax.swing.JFrame {
     }//GEN-LAST:event_btnQuitarMateActionPerformed
 
     private void btnGuardarEdicionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarEdicionActionPerformed
-       
-        String nombre = this.txtNombreUser.getText() ;
-        String apellido = this.txtApellidoUser.getText();
-        String dni = this.txtDniUser.getText() ;
-        String email = this.txtEmailUser.getText() ;
-        String pass = this.txtPassUser.getText() ;
-        this.controlador.modificarUsuario(user, nombre, apellido, dni, email, pass);
+        if (txtApellidoUser.getText().isEmpty() | txtNombreUser.getText().isEmpty() | txtDniUser.getText().isEmpty() | txtEmailUser.getText().isEmpty() | txtPassUser.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Complete los campos");
+        } else {
+            String nombre = this.txtNombreUser.getText();
+            String apellido = this.txtApellidoUser.getText();
+            String dni = this.txtDniUser.getText();
+            String email = this.txtEmailUser.getText();
+            String pass = this.txtPassUser.getText();
+            this.controlador.modificarUsuario(user, nombre, apellido, dni, email, pass);
+            this.previo.setVisible(true);
+            this.previo.setLocationRelativeTo(null);
+            this.dispose();
+        }
+
     }//GEN-LAST:event_btnGuardarEdicionActionPerformed
 
-    private void cargarDatos(){
+    private void cargarDatos() {
         this.txtNombreUser.setText(user.getNombre());
         this.txtApellidoUser.setText(user.getApellido());
         this.txtDniUser.setText(user.getDni());
         this.txtEmailUser.setText(user.getEmail());
         this.txtPassUser.setText(user.getPassword());
     }
-    
-    private void cargarMaterias(){
+
+    private void cargarMaterias() {
         this.listaMaterias.setListData(this.controlador.listarMaterias().toArray());
     }
-    
-    private void cargarMateriasAsignadas(){
-        if(Usuario.PROFESOR.equals(user.getTipoUsuario())){
-            UsuarioAcademico ua = (UsuarioAcademico) user ;
+
+    private void cargarMateriasAsignadas() {
+        if (Usuario.PROFESOR.equals(user.getTipoUsuario())) {
+            UsuarioAcademico ua = (UsuarioAcademico) user;
             this.listMaterDictProf.setListData(ua.getMaterias().toArray());
         }
     }
@@ -296,12 +318,13 @@ public class ViewEditPerfil extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel labelAviso;
+    private javax.swing.JLabel labelMate;
+    private javax.swing.JLabel labelMateDic;
     private javax.swing.JList listMaterDictProf;
     private javax.swing.JList listaMaterias;
     private javax.swing.JTextField txtApellidoUser;

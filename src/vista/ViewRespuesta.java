@@ -43,10 +43,11 @@ public class ViewRespuesta extends javax.swing.JFrame {
         this.pregunta = p;
         this.labelPregunta.setText(p.getTitulo());
         recargarRespuestas();
-        if(user.getTipoUsuario().equals(Usuario.ESTUDIANTE) | user.getTipoUsuario().equals(Usuario.PROFESOR)){
+        if (user.getTipoUsuario().equals(Usuario.ESTUDIANTE) | user.getTipoUsuario().equals(Usuario.PROFESOR)) {
             this.btnEliminar.setVisible(false);
+            this.btnEditarRespuesta.setVisible(false);
         }
-        
+
     }
 
     /**
@@ -73,9 +74,13 @@ public class ViewRespuesta extends javax.swing.JFrame {
         btnDislike = new javax.swing.JButton();
         labelVotPos = new javax.swing.JLabel();
         labelVotNeg = new javax.swing.JLabel();
+        btnEditarRespuesta = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowActivated(java.awt.event.WindowEvent evt) {
+                formWindowActivated(evt);
+            }
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
             }
@@ -130,6 +135,13 @@ public class ViewRespuesta extends javax.swing.JFrame {
             }
         });
 
+        btnEditarRespuesta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/editar.png"))); // NOI18N
+        btnEditarRespuesta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarRespuestaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -154,7 +166,9 @@ public class ViewRespuesta extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(351, 351, 351)
+                                .addGap(294, 294, 294)
+                                .addComponent(btnEditarRespuesta, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
                                 .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 417, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -171,8 +185,8 @@ public class ViewRespuesta extends javax.swing.JFrame {
                                         .addComponent(labelVotPos)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(btnLike, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(65, 65, 65)
-                                        .addComponent(labelVotNeg, javax.swing.GroupLayout.PREFERRED_SIZE, 9, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(48, 48, 48)
+                                        .addComponent(labelVotNeg, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(btnDislike, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGap(0, 0, Short.MAX_VALUE)))
@@ -194,9 +208,11 @@ public class ViewRespuesta extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(43, Short.MAX_VALUE))
+                        .addGap(19, 19, 19)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnEditarRespuesta, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addContainerGap(35, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(3, 3, 3)
                         .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -220,12 +236,17 @@ public class ViewRespuesta extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnPublicarRespuestaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPublicarRespuestaActionPerformed
-        String respuesta = this.txtRespuesta.getText();
-        this.controlador.publicarRespuesta(respuesta, (UsuarioAcademico) user, pregunta);
-        this.controlador.sumarReputacion((UsuarioAcademico) user);
-        this.txtRespuesta.setText("");
-        recargarRespuestas();
-        
+        if (!txtRespuesta.getText().isEmpty()) {
+            String respuesta = this.txtRespuesta.getText();
+            this.controlador.publicarRespuesta(respuesta, (UsuarioAcademico) user, pregunta);
+            this.controlador.sumarReputacion((UsuarioAcademico) user);
+            this.txtRespuesta.setText("");
+            recargarRespuestas();
+        }else{
+            JOptionPane.showMessageDialog(null, "Cargue el campo");
+        }
+
+
     }//GEN-LAST:event_btnPublicarRespuestaActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
@@ -236,7 +257,7 @@ public class ViewRespuesta extends javax.swing.JFrame {
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
         Respuesta r = (Respuesta) this.listaRespuestas.getSelectedValue();
-        
+
         this.controlador.eliminarRespuesta(r);
         this.listaRespuestas.clearSelection();
         recargarRespuestas();
@@ -244,28 +265,29 @@ public class ViewRespuesta extends javax.swing.JFrame {
 //        modelo.add(0, "nada");
 //        this.listaDetalles.setModel(modelo);
 
-        
+
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void listaRespuestasValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listaRespuestasValueChanged
-        if(!listaRespuestas.isSelectionEmpty()){
+        if (!listaRespuestas.isSelectionEmpty()) {
             cargarDetalles();
         }
-        
+
 
     }//GEN-LAST:event_listaRespuestasValueChanged
 
     private void btnLikeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLikeActionPerformed
         if (!listaRespuestas.isSelectionEmpty()) {
-            Respuesta r = (Respuesta) this.listaRespuestas.getSelectedValue() ;
+            Respuesta r = (Respuesta) this.listaRespuestas.getSelectedValue();
+            System.out.println("ver " + user);
             this.controlador.votarRespuesta(r, true, (UsuarioAcademico) user);
             cargarVotos();
-        }  
+        }
     }//GEN-LAST:event_btnLikeActionPerformed
 
     private void btnDislikeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDislikeActionPerformed
         if (!listaRespuestas.isSelectionEmpty()) {
-            Respuesta r = (Respuesta) this.listaRespuestas.getSelectedValue() ;
+            Respuesta r = (Respuesta) this.listaRespuestas.getSelectedValue();
             this.controlador.votarRespuesta(r, false, (UsuarioAcademico) user);
             cargarVotos();
         }
@@ -273,8 +295,24 @@ public class ViewRespuesta extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnDislikeActionPerformed
 
+    private void btnEditarRespuestaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarRespuestaActionPerformed
+        if (!listaRespuestas.isSelectionEmpty()) {
+            Respuesta r = (Respuesta) this.listaRespuestas.getSelectedValue();
+            ViewEditResp ver = new ViewEditResp(controlador, this, r);
+            this.setEnabled(false);
+            ver.setVisible(true);
+            ver.setLocationRelativeTo(null);
+        }
+    }//GEN-LAST:event_btnEditarRespuestaActionPerformed
+
+    private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
+        if (!listaRespuestas.isSelectionEmpty()) {
+            recargarRespuestas();
+        }
+    }//GEN-LAST:event_formWindowActivated
+
     public void recargarRespuestas() {
-        
+
         List<Respuesta> respuestas = this.controlador.verRespuestas(pregunta);
         this.listaRespuestas.setListData(respuestas.toArray());
     }
@@ -282,31 +320,31 @@ public class ViewRespuesta extends javax.swing.JFrame {
     private void cargarDetalles() {
         DefaultListModel modelo = new DefaultListModel();
         SimpleDateFormat f = new SimpleDateFormat("dd/MM/yy HH:mm");
-        
+
         Respuesta r = (Respuesta) this.listaRespuestas.getSelectedValue();
-        List<Object> detalles = this.controlador.verDetalleRespuesta(r) ;
+        List<Object> detalles = this.controlador.verDetalleRespuesta(r);
         modelo.add(0, "Usuario: " + detalles.get(0));
         modelo.add(1, "Fecha: " + detalles.get(1));
-        modelo.add(2, "Cantidad de votos positivos: " + detalles.get(2) );
-        modelo.add(3, "Cantidad de votos negativos: " + detalles.get(3) );
-        
+        modelo.add(2, "Cantidad de votos positivos: " + detalles.get(2));
+        modelo.add(3, "Cantidad de votos negativos: " + detalles.get(3));
 
         this.listaDetalles.setModel(modelo);
         cargarVotos();
-        
+
     }
-    
-    private void cargarVotos(){
-        if(!listaRespuestas.isSelectionEmpty()){
-            Respuesta r = (Respuesta) this.listaRespuestas.getSelectedValue() ;
+
+    private void cargarVotos() {
+        if (!listaRespuestas.isSelectionEmpty()) {
+            Respuesta r = (Respuesta) this.listaRespuestas.getSelectedValue();
             this.labelVotPos.setText(Integer.toString(this.controlador.obtenerCantVotosPositivos(r)));
             this.labelVotNeg.setText(Integer.toString(this.controlador.obtenerCantVotosNegativos(r)));
         }
-        
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDislike;
+    private javax.swing.JButton btnEditarRespuesta;
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnLike;
     private javax.swing.JButton btnPublicarRespuesta;
